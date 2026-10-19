@@ -1,12 +1,22 @@
-require("dotenv").config();
-const nodemailer = require("nodemailer");
+const sendEmail = async ({ to, subject, html }) => {
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "api-key": process.env.BREVO_API_KEY,
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+    body: JSON.stringify({
+      sender: { name: "ApnaCart", email: process.env.EMAIL_FROM },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+    }),
+  });
 
-const transporter = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_APP_PASS,
-  },
-});
+  if (!res.ok) {
+    throw new Error(`Brevo error ${res.status}: ${await res.text()}`);
+  }
+};
 
-module.exports = transporter;
+module.exports = { sendEmail };
