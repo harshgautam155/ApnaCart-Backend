@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const { generateOTP } = require("../services/otpService");
 const { createToken } = require("../services/authentication");
 const { sendEmail } = require("../utils/sendEmail");
+const { authCookieOptions } = require("../utils/authCookie");
 
 async function registerUser(req, res) {
   const { fullName, email, phoneNumber, password } = req.body;
@@ -195,7 +196,7 @@ async function loginUser(req, res) {
     }
     const token = createToken(user);
 
-    res.cookie("authtoken", token, { httpOnly: true });
+    res.cookie("authtoken", token, authCookieOptions);
 
     res.status(200).json({
       message: "User logged in successfully",
@@ -219,7 +220,7 @@ async function loginUser(req, res) {
 
 async function logoutUser(req, res) {
   try {
-    res.clearCookie("authtoken", { httpOnly: true });
+    res.clearCookie("authtoken", authCookieOptions);
 
     return res.status(200).json({
       message: "User logged out successfully",
@@ -243,7 +244,7 @@ async function deleteUser(req, res) {
       });
     }
 
-    res.clearCookie("authtoken", { httpOnly: true });
+    res.clearCookie("authtoken", authCookieOptions);
 
     res.status(200).json({
       message: "User deleted successfully",

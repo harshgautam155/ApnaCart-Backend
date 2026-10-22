@@ -1,4 +1,5 @@
 const { validateToken } = require("../services/authentication");
+const { authCookieOptions } = require("../utils/authCookie");
 
 function checkForAuthenticationCookie(cookieName, requireAuth = false) {
   return (req, res, next) => {
@@ -32,7 +33,7 @@ function checkForAuthenticationCookie(cookieName, requireAuth = false) {
         });
       }
 
-      res.clearCookie(cookieName);
+      res.clearCookie(cookieName, authCookieOptions);
       return next();
     }
   };
